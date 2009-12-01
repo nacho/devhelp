@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/dict-plugin/!svn/ver/9/dictionary
+END
+dict-panel.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/dict-plugin/!svn/ver/9/dictionary/dict-panel.c
+END
+gedit-dictionary-plugin.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/dict-plugin/!svn/ver/1/dictionary/gedit-dictionary-plugin.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/dict-plugin/!svn/ver/1/dictionary/Makefile.in
+END
+gdict-sidebar.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/dict-plugin/!svn/ver/1/dictionary/gdict-sidebar.c
+END
+dict-panel.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/dict-plugin/!svn/ver/9/dictionary/dict-panel.h
+END
+ChangeLog
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/dict-plugin/!svn/ver/9/dictionary/ChangeLog
+END
+dict.gedit-plugin.desktop.in
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/dict-plugin/!svn/ver/1/dictionary/dict.gedit-plugin.desktop.in
+END
+gdict-sidebar.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/dict-plugin/!svn/ver/1/dictionary/gdict-sidebar.h
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/dict-plugin/!svn/ver/1/dictionary/Makefile.am
+END
+gedit-dictionary-plugin.c
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/dict-plugin/!svn/ver/9/dictionary/gedit-dictionary-plugin.c
+END

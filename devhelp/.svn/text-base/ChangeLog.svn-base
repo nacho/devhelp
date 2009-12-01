@@ -1,0 +1,15 @@
+2007-09-07  Ignacio Casal Quinteiro  <nacho.resa@gmail.com>
+
+	* dict-panel.c: Added store_position func to store the
+	paned position and added gedit_dict_panel_set_position
+	to set the position when the plugin is activated.
+	* dict-panal.h: Added gedit_dict_panel_set_position func.
+	* gedit-dictionary-plugin.c: Added restore position.
+
+2007-09-05  Ignacio Casal Quinteiro  <nacho.resa@gmail.com>
+
+	* dict-panel.c: Added link text support.
+
+2007-09-02  Ignacio Casal Quinteiro  <nacho.resa@gmail.com>
+
+	* gedit-dictionary-plugin.c: Added dictionary theme icon.
