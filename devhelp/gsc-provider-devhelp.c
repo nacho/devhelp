@@ -436,10 +436,10 @@ gsc_provider_devhelp_populate (GtkSourceCompletionProvider *provider,
 	gchar *word;
 
 	devhelp->priv->cancel_id = 
-		g_signal_connect_swapped (context, 
-			                      "cancelled", 
-			                      G_CALLBACK (population_finished), 
-			                      provider);
+		g_signal_connect_swapped (context,
+			                  "cancelled",
+			                  G_CALLBACK (population_finished),
+			                  provider);
 	
 	devhelp->priv->counter = 0;
 	devhelp->priv->populate_iter = NULL;

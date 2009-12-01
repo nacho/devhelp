@@ -26,6 +26,7 @@
 #endif
 
 #include "gedit-devhelp-plugin.h"
+#include "gsc-provider-devhelp.h"
 
 #include <gedit/gedit-debug.h>
 #include <gedit/gedit-window.h>
@@ -39,7 +40,9 @@
 
 typedef struct
 {
-	guint		 context_id;
+	GscProviderDevhelp *provider;
+	gulong tab_added_id;
+	gulong tab_removed_id;
 } WindowData;
 
 GEDIT_PLUGIN_REGISTER_TYPE_WITH_CODE (GeditDevhelpPlugin, gedit_devhelp_plugin,
@@ -64,8 +67,69 @@ static void
 free_window_data (WindowData *data)
 {
 	g_return_if_fail (data != NULL);
-	
+
+	g_object_unref (data->provider);
 	g_slice_free (WindowData, data);
+}
+
+static void
+add_view (WindowData    *data,
+	  GtkSourceView *view)
+{
+	GtkSourceCompletion *completion;
+	
+	completion = gtk_source_view_get_completion (view);
+	
+	gtk_source_completion_add_provider (completion,
+					    GTK_SOURCE_COMPLETION_PROVIDER (data->provider),
+					    NULL);
+}
+
+static void
+remove_view (WindowData    *data,
+	     GtkSourceView *view)
+{
+	GtkSourceCompletion *completion;
+	
+	completion = gtk_source_view_get_completion (view);
+	
+	gtk_source_completion_remove_provider (completion,
+					       GTK_SOURCE_COMPLETION_PROVIDER (data->provider),
+					       NULL);
+}
+
+static void
+tab_added_cb (GeditWindow *window,
+	      GeditTab    *tab,
+	      gpointer     useless)
+{
+	GeditView *view;
+	WindowData *data;
+	
+	data = (WindowData *) g_object_get_data (G_OBJECT (window),
+						 WINDOW_DATA_KEY);
+	g_return_if_fail (data != NULL);
+	
+	view = gedit_tab_get_view (tab);
+
+	add_view (data, GTK_SOURCE_VIEW (view));
+}
+
+static void
+tab_removed_cb (GeditWindow *window,
+		GeditTab    *tab,
+		gpointer     useless)
+{
+	GeditView *view;
+	WindowData *data;
+	
+	data = (WindowData *) g_object_get_data (G_OBJECT (window),
+						 WINDOW_DATA_KEY);
+	g_return_if_fail (data != NULL);
+	
+	view = gedit_tab_get_view (tab);
+
+	remove_view (data, GTK_SOURCE_VIEW (view));
 }
 
 static void
@@ -73,29 +137,56 @@ impl_activate (GeditPlugin *plugin,
 	       GeditWindow *window)
 {
 	WindowData *data;
+	GList *views, *l;
 
 	gedit_debug (DEBUG_PLUGINS);
 
 	data = g_slice_new (WindowData);
+	data->provider = gsc_provider_devhelp_new ();
+
+	views = gedit_window_get_views (window);
+	for (l = views; l != NULL; l = g_list_next (l))
+	{
+		add_view (data, GTK_SOURCE_VIEW (l->data));
+	}
 
 	g_object_set_data_full (G_OBJECT (window),
 				WINDOW_DATA_KEY,
 				data,
 				(GDestroyNotify) free_window_data);
+
+	data->tab_added_id =
+		g_signal_connect (window, "tab-added",
+				  G_CALLBACK (tab_added_cb),
+				  NULL);
+	data->tab_removed_id =
+		g_signal_connect (window, "tab-removed",
+				  G_CALLBACK (tab_removed_cb),
+				  NULL);
 }
 
 static void
-impl_deactivate	(GeditPlugin *plugin,
+impl_deactivate (GeditPlugin *plugin,
 		 GeditWindow *window)
 {
 	WindowData *data;
+	GList *views, *l;
 
 	gedit_debug (DEBUG_PLUGINS);
-
+	
 	data = (WindowData *) g_object_get_data (G_OBJECT (window),
 						 WINDOW_DATA_KEY);
 	g_return_if_fail (data != NULL);
 
+	views = gedit_window_get_views (window);
+	for (l = views; l != NULL; l = g_list_next (l))
+	{
+		remove_view (data, GTK_SOURCE_VIEW (l->data));
+	}
+
+	g_signal_handler_disconnect (window, data->tab_added_id);
+	g_signal_handler_disconnect (window, data->tab_removed_id);
+	
 	g_object_set_data (G_OBJECT (window), WINDOW_DATA_KEY, NULL);
 }
 
