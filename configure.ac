@@ -6,6 +6,7 @@ GEDIT_DEVHELP_PLUGIN_MAJOR=0.0.1
 AC_INIT(gedit-devhelp-plugin, 0.0.1, http://bugzilla.gnome.org/enter_bug.cgi?product=gedit)
 
 AC_CONFIG_SRCDIR([devhelp])
+AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_PROGRAM([gedit-devhelp-plugin])
 
 AC_SUBST(GEDIT_PLUGINS_MAJOR)
@@ -15,6 +16,8 @@ AC_PREREQ(2.59)
 AM_INIT_AUTOMAKE([1.8 dist-bzip2 no-dist-gzip])
 
 AM_MAINTAINER_MODE
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+
 AC_CONFIG_HEADERS([config.h])
 AC_DISABLE_STATIC
 
@@ -47,7 +50,7 @@ PKG_CHECK_MODULES(GEDIT_DEVHELP_PLUGIN, [
 	glib-2.0 >= 2.16.0
 	gtk+-2.0 >= 2.16.0
 	gtksourceview-2.0 >= 2.9.1
-	gedit-2.29 >= 2.29.1
+	gedit-2.20 >= 2.29.1
 ])
 
 AC_SUBST(GEDIT_DEVHELP_PLUGIN_LIBS)

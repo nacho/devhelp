@@ -30,6 +30,7 @@
 #include <gedit/gedit-debug.h>
 #include <gedit/gedit-window.h>
 
+#define WINDOW_DATA_KEY "GeditDevhelpPluginDataKey"
 
 #define GEDIT_DEVHELP_PLUGIN_GET_PRIVATE(object) \
 				(G_TYPE_INSTANCE_GET_PRIVATE ((object),	\
@@ -64,8 +65,7 @@ free_window_data (WindowData *data)
 {
 	g_return_if_fail (data != NULL);
 	
-	g_object_unref (data->panel);
-	g_free (data);
+	g_slice_free (WindowData, data);
 }
 
 static void
