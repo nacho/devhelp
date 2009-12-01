@@ -53,7 +53,10 @@ struct _GscProviderDevhelpClass
 	GObjectClass parent_class;
 };
 
-GType gsc_provider_devhelp_get_type (void) G_GNUC_CONST;
+GType		 gsc_provider_devhelp_get_type		(void) G_GNUC_CONST;
+
+GType		 gedit_provider_devhelp_register_type	(GTypeModule * module);
+
 GscProviderDevhelp *gsc_provider_devhelp_new (void);
 
 

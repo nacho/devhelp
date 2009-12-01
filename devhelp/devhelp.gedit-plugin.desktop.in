@@ -1,9 +1,9 @@
 [Gedit Plugin]
-Module=dict
+Module=devhelp
 IAge=2
-_Name=Dictionary
-_Description=Look up words in a dictionary.
-Icon=gdict
-Authors=Ignacio Casal <nacho.resa@gmail.com>
-Copyright=Copyright @ 2007 Ignacio Casal
+_Name=Devhelp Completion
+_Description=Get tips from Devhelp while you write
+Icon=devhelp
+Authors=Ignacio Casal Quinteiro <icq@gnome.org>
+Copyright=Copyright @ 2009 Ignacio Casal Quinteiro
 Website=http://www.gedit.org

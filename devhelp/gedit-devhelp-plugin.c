@@ -46,7 +46,7 @@ typedef struct
 } WindowData;
 
 GEDIT_PLUGIN_REGISTER_TYPE_WITH_CODE (GeditDevhelpPlugin, gedit_devhelp_plugin,
-		gedit_devhelp_panel_register_type (module);
+	gsc_provider_devhelp_register_type (type_module);
 )
 
 static void

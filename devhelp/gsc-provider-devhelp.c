@@ -28,6 +28,7 @@
 #include <gtksourceview/gtksourceview.h>
 #include <gtksourceview/gtksourcecompletionitem.h>
 #include <gtksourceview/gtksourcecompletionprovider.h>
+#include <gedit/gedit-plugin.h>
 #include <string.h>
 
 #define GSC_PROVIDER_DEVHELP_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE((object), GSC_TYPE_PROVIDER_DEVHELP, GscProviderDevhelpPrivate))
@@ -77,11 +78,12 @@ GType gsc_devhelp_item_get_type (void);
 static void gsc_provider_devhelp_iface_init (GtkSourceCompletionProviderIface *iface);
 static void gsc_devhelp_item_iface_init (gpointer g_iface, gpointer iface_data);
 
-G_DEFINE_TYPE_WITH_CODE (GscProviderDevhelp, 
-			 gsc_provider_devhelp, 
-			 G_TYPE_OBJECT,
-			 G_IMPLEMENT_INTERFACE (GTK_TYPE_SOURCE_COMPLETION_PROVIDER,
-				 		gsc_provider_devhelp_iface_init))
+GEDIT_PLUGIN_DEFINE_TYPE_WITH_CODE (GscProviderDevhelp, 
+				    gsc_provider_devhelp, 
+				    G_TYPE_OBJECT,
+				    GEDIT_PLUGIN_IMPLEMENT_INTERFACE (gsc_provider_devhelp,
+				    				      GTK_TYPE_SOURCE_COMPLETION_PROVIDER,
+								      gsc_provider_devhelp_iface_init))
 
 G_DEFINE_TYPE_WITH_CODE (GscDevhelpItem, 
 			 gsc_devhelp_item, 
