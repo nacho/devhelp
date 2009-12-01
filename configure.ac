@@ -51,7 +51,8 @@ PKG_CHECK_MODULES(GEDIT_DEVHELP_PLUGIN, [
 	gtk+-2.0 >= 2.16.0
 	gtksourceview-2.0 >= 2.9.1
 	gedit-2.20 >= 2.29.1
-	libdevhelp-1.0
+	libdevhelp-1.0 >= 0.22
+	webkit-1.0
 ])
 
 AC_SUBST(GEDIT_DEVHELP_PLUGIN_LIBS)

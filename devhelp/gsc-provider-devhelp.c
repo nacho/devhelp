@@ -508,6 +508,7 @@ gsc_provider_devhelp_get_icon (GtkSourceCompletionProvider *provider)
 
 static gboolean
 gsc_provider_devhelp_get_start_iter (GtkSourceCompletionProvider *provider,
+                                     GtkSourceCompletionContext  *context,
                                      GtkSourceCompletionProposal *proposal,
                                      GtkTextIter                 *iter)
 {
@@ -566,7 +567,9 @@ gsc_provider_devhelp_finalize (GObject *object)
 static void
 gsc_provider_devhelp_dispose (GObject *object)
 {
-	population_finished (GSC_PROVIDER_DEVHELP (object));
+	GscProviderDevhelp *provider = GSC_PROVIDER_DEVHELP (object);
+
+	population_finished (provider);
 
 	if (provider->priv->icon)
 	{

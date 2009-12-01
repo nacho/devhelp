@@ -11,6 +11,8 @@ INCLUDES = \
 plugin_LTLIBRARIES = libdevhelp.la
 
 libdevhelp_la_SOURCES = \
+	gsc-provider-devhelp.h	\
+	gsc-provider-devhelp.c	\
 	gedit-devhelp-plugin.h	\
 	gedit-devhelp-plugin.c
 	
