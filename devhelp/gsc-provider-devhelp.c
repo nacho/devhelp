@@ -574,12 +574,6 @@ gsc_provider_devhelp_finalize (GObject *object)
 	
 	g_sequence_free (provider->priv->proposals);
 	
-	if (provider->priv->completion_mark)
-	{
-		gtk_text_buffer_delete_mark (gtk_text_mark_get_buffer (provider->priv->completion_mark),
-		                             provider->priv->completion_mark);
-	}
-	
 	G_OBJECT_CLASS (gsc_provider_devhelp_parent_class)->finalize (object);
 }
 
@@ -589,6 +583,14 @@ gsc_provider_devhelp_dispose (GObject *object)
 	GscProviderDevhelp *provider = GSC_PROVIDER_DEVHELP (object);
 
 	population_finished (provider);
+
+	if (provider->priv->completion_mark)
+	{
+		gtk_text_buffer_delete_mark (gtk_text_mark_get_buffer (provider->priv->completion_mark),
+		                             provider->priv->completion_mark);
+
+		provider->priv->completion_mark = NULL;
+	}
 
 	if (provider->priv->icon)
 	{
