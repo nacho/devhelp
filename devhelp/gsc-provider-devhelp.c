@@ -517,8 +517,7 @@ gsc_provider_devhelp_get_start_iter (GtkSourceCompletionProvider *provider,
 {
 	GscProviderDevhelp *devhelp = GSC_PROVIDER_DEVHELP (provider);
 	
-	if (devhelp->priv->completion_mark == NULL ||
-	    gtk_text_mark_get_deleted (devhelp->priv->completion_mark))
+	if (devhelp->priv->completion_mark == NULL)
 	{
 		return FALSE;
 	}
