@@ -602,9 +602,17 @@ gsc_provider_devhelp_class_init (GscProviderDevhelpClass *klass)
 static void
 gsc_provider_devhelp_init (GscProviderDevhelp *self)
 {
+	GtkIconTheme *icon_theme;
+
 	self->priv = GSC_PROVIDER_DEVHELP_GET_PRIVATE (self);
+
+	icon_theme = gtk_icon_theme_get_default ();
 	
-	self->priv->icon = gdk_pixbuf_new_from_file ("/usr/share/icons/hicolor/16x16/apps/devhelp.png", NULL);
+	self->priv->icon = gtk_icon_theme_load_icon (icon_theme,
+						     "devhelp",
+						     16,
+						     GTK_ICON_LOOKUP_USE_BUILTIN,
+						     NULL);
 	
 	self->priv->idle_populate_id = g_idle_add ((GSourceFunc)idle_populate_proposals,
 	                                           self);
