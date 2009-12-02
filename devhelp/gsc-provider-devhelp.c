@@ -36,6 +36,7 @@
 #define POPULATE_BATCH 500
 #define PROCESS_BATCH 300
 #define MAX_ITEMS 5000
+#define MIN_WORD_LEN 3
 
 typedef struct
 {
@@ -322,9 +323,9 @@ add_in_idle (GscProviderDevhelp *devhelp)
 	if (devhelp->priv->word == NULL)
 	{
 		gtk_source_completion_context_add_proposals (devhelp->priv->context,
-	                                                 GTK_SOURCE_COMPLETION_PROVIDER (devhelp),
-	                                                 NULL,
-	                                                 TRUE);
+	                                                     GTK_SOURCE_COMPLETION_PROVIDER (devhelp),
+	                                                     NULL,
+	                                                     TRUE);
 		population_finished (devhelp);
 		return FALSE;
 	}
@@ -532,7 +533,23 @@ static gboolean
 gsc_provider_devhelp_match (GtkSourceCompletionProvider *provider,
                             GtkSourceCompletionContext  *context)
 {
-	return TRUE;
+	GtkTextIter iter;
+	gchar *word;
+	gboolean match = FALSE;
+
+	gtk_source_completion_context_get_iter (context, &iter);
+
+	word = get_word_at_iter (GSC_PROVIDER_DEVHELP (provider), &iter);
+
+	/* FIXME: If MIN_WORD_LEN >= 4 only the doc completion is loaded,
+	 * also because if the doc provider is loader before this one the icon
+	 * is not shown. We should fix this before 2.30
+	 */
+	match = word != NULL && g_utf8_strlen (word, -1) >= MIN_WORD_LEN;
+
+	g_free (word);
+
+	return match;
 }
 
 static void
