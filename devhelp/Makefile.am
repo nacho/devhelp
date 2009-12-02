@@ -18,8 +18,9 @@ libdevhelp_la_SOURCES = \
 	
 
 libdevhelp_la_LDFLAGS = \
-	$(PLUGIN_LIBTOOL_FLAGS)				\
-	$(GEDIT_DEVHELP_LIBS)
+	$(PLUGIN_LIBTOOL_FLAGS)
+
+libdevhelp_la_LIBADD = $(GEDIT_DEVHELP_PLUGIN_LIBS)
 
 # Plugin Info
 
