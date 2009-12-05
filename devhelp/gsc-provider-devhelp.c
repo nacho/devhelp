@@ -33,6 +33,8 @@
 
 #define GSC_PROVIDER_DEVHELP_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE((object), GSC_TYPE_PROVIDER_DEVHELP, GscProviderDevhelpPrivate))
 
+#define MARK_NAME "GscProviderDevhelpMark"
+
 #define POPULATE_BATCH 500
 #define PROCESS_BATCH 300
 #define MAX_ITEMS 5000
@@ -57,7 +59,6 @@ struct _GscProviderDevhelpPrivate
 	GtkWidget *view;
 	GdkPixbuf *icon;
 	
-	GtkTextMark *completion_mark;
 	gchar *word;
 	gint word_len;
 
@@ -154,7 +155,8 @@ population_finished (GscProviderDevhelp *devhelp)
 	{
 		if (devhelp->priv->cancel_id)
 		{
-			g_signal_handler_disconnect (devhelp->priv->context, devhelp->priv->cancel_id);
+			g_signal_handler_disconnect (devhelp->priv->context,
+						     devhelp->priv->cancel_id);
 			devhelp->priv->cancel_id = 0;
 		}
 	
@@ -176,6 +178,7 @@ get_word_at_iter (GscProviderDevhelp *devhelp,
 	GtkTextIter start = *iter;
 	gint line = gtk_text_iter_get_line (iter);
 	gboolean went_back = TRUE;
+	GtkTextMark *mark;
 	
 	if (!gtk_text_iter_backward_char (&start))
 	{
@@ -198,19 +201,22 @@ get_word_at_iter (GscProviderDevhelp *devhelp,
 	{
 		return NULL;
 	}
+
+	mark = gtk_text_buffer_get_mark (gtk_text_iter_get_buffer (iter),
+					 MARK_NAME);
 	
-	if (devhelp->priv->completion_mark)
+	if (mark)
 	{
 		gtk_text_buffer_move_mark (gtk_text_iter_get_buffer (iter),
-		                           devhelp->priv->completion_mark,
+		                           mark,
 		                           &start);
 	}
 	else
 	{
-		devhelp->priv->completion_mark = gtk_text_buffer_create_mark (gtk_text_iter_get_buffer (iter),
-		                                                              NULL,
-		                                                              &start,
-		                                                              TRUE);
+		mark = gtk_text_buffer_create_mark (gtk_text_iter_get_buffer (iter),
+		                                    MARK_NAME,
+		                                    &start,
+		                                    TRUE);
 	}
 	
 	return gtk_text_iter_get_text (&start, iter);
@@ -461,7 +467,6 @@ gsc_provider_devhelp_populate (GtkSourceCompletionProvider *provider,
 	}
 	else
 	{
-		devhelp->priv->word = NULL;
 		devhelp->priv->word_len = 0;
 	}
 	
@@ -516,15 +521,21 @@ gsc_provider_devhelp_get_start_iter (GtkSourceCompletionProvider *provider,
                                      GtkTextIter                 *iter)
 {
 	GscProviderDevhelp *devhelp = GSC_PROVIDER_DEVHELP (provider);
+	GtkTextBuffer *buf;
+	GtkTextMark *mark;
+	GtkTextIter context_iter;
+
+	gtk_source_completion_context_get_iter (context, &context_iter);
+	buf = gtk_text_iter_get_buffer (&context_iter);
+	mark = gtk_text_buffer_get_mark (buf, MARK_NAME);
 	
-	if (devhelp->priv->completion_mark == NULL)
+	if (!mark)
 	{
 		return FALSE;
 	}
 	
-	gtk_text_buffer_get_iter_at_mark (gtk_text_mark_get_buffer (devhelp->priv->completion_mark),
-	                                  iter,
-	                                  devhelp->priv->completion_mark);
+	gtk_text_buffer_get_iter_at_mark (buf, iter, mark);
+
 	return TRUE;
 }
 
@@ -582,14 +593,6 @@ gsc_provider_devhelp_dispose (GObject *object)
 	GscProviderDevhelp *provider = GSC_PROVIDER_DEVHELP (object);
 
 	population_finished (provider);
-
-	if (provider->priv->completion_mark)
-	{
-		gtk_text_buffer_delete_mark (gtk_text_mark_get_buffer (provider->priv->completion_mark),
-		                             provider->priv->completion_mark);
-
-		provider->priv->completion_mark = NULL;
-	}
 
 	if (provider->priv->icon)
 	{
