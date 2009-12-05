@@ -56,6 +56,7 @@ typedef struct
 struct _GscProviderDevhelpPrivate
 {
 	DhBase *dhbase;
+	GtkWidget *scrolled_window;
 	GtkWidget *view;
 	GdkPixbuf *icon;
 	
@@ -399,12 +400,19 @@ idle_populate_proposals (GscProviderDevhelp *devhelp)
 	{
 		devhelp->priv->proposals = g_sequence_new ((GDestroyNotify)g_object_unref);
 		devhelp->priv->dhbase = dh_base_new ();
+		devhelp->priv->scrolled_window = gtk_scrolled_window_new (NULL, NULL);
 		devhelp->priv->view = dh_assistant_view_new ();
+
+		gtk_widget_show (devhelp->priv->view);
+
+		gtk_container_add (GTK_CONTAINER (devhelp->priv->scrolled_window),
+				   devhelp->priv->view);
 
 		dh_assistant_view_set_base (DH_ASSISTANT_VIEW (devhelp->priv->view), 
 		                            devhelp->priv->dhbase);
-		                            
-		gtk_widget_set_size_request (devhelp->priv->view, 400, 300);
+
+		gtk_widget_set_size_request (devhelp->priv->scrolled_window,
+					     400, 300);
 		
 		devhelp->priv->populateptr = dh_base_get_keywords (devhelp->priv->dhbase);
 	}
@@ -494,7 +502,7 @@ static GtkWidget *
 gsc_provider_devhelp_get_info_widget (GtkSourceCompletionProvider *provider,
                                       GtkSourceCompletionProposal *proposal)
 {
-	return GSC_PROVIDER_DEVHELP (provider)->priv->view;
+	return GSC_PROVIDER_DEVHELP (provider)->priv->scrolled_window;
 }
 
 static void
