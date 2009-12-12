@@ -45,6 +45,11 @@ typedef struct
 	gulong tab_removed_id;
 } WindowData;
 
+struct _GeditDevhelpPluginPrivate
+{
+	DhBase *dhbase;
+};
+
 GEDIT_PLUGIN_REGISTER_TYPE_WITH_CODE (GeditDevhelpPlugin, gedit_devhelp_plugin,
 	gsc_provider_devhelp_register_type (type_module);
 )
@@ -52,7 +57,11 @@ GEDIT_PLUGIN_REGISTER_TYPE_WITH_CODE (GeditDevhelpPlugin, gedit_devhelp_plugin,
 static void
 gedit_devhelp_plugin_init (GeditDevhelpPlugin *plugin)
 {
+	plugin->priv = GEDIT_DEVHELP_PLUGIN_GET_PRIVATE (plugin);
+
 	gedit_debug_message (DEBUG_PLUGINS, "GeditDevhelpPlugin initializing");
+
+	plugin->priv->dhbase = dh_base_new ();
 }
 
 static void
@@ -61,6 +70,22 @@ gedit_devhelp_plugin_finalize (GObject *object)
 	gedit_debug_message (DEBUG_PLUGINS, "GeditDevhelpPlugin finalizing");
 
 	G_OBJECT_CLASS (gedit_devhelp_plugin_parent_class)->finalize (object);
+}
+
+static void
+gedit_devhelp_plugin_dispose (GObject *object)
+{
+	GeditDevhelpPlugin *plugin = GEDIT_DEVHELP_PLUGIN (object);
+
+	gedit_debug_message (DEBUG_PLUGINS, "GeditDevhelpPlugin disposing");
+
+	if (plugin->priv->dhbase != NULL)
+	{
+		g_object_unref (plugin->priv->dhbase);
+		plugin->priv->dhbase = NULL;
+	}
+
+	G_OBJECT_CLASS (gedit_devhelp_plugin_parent_class)->dispose (object);
 }
 
 static void
@@ -142,7 +167,7 @@ impl_activate (GeditPlugin *plugin,
 	gedit_debug (DEBUG_PLUGINS);
 
 	data = g_slice_new (WindowData);
-	data->provider = gsc_provider_devhelp_new ();
+	data->provider = gsc_provider_devhelp_new (GEDIT_DEVHELP_PLUGIN (plugin)->priv->dhbase);
 
 	views = gedit_window_get_views (window);
 	for (l = views; l != NULL; l = g_list_next (l))
@@ -197,7 +222,10 @@ gedit_devhelp_plugin_class_init (GeditDevhelpPluginClass *klass)
 	GeditPluginClass *plugin_class = GEDIT_PLUGIN_CLASS (klass);
 
 	object_class->finalize = gedit_devhelp_plugin_finalize;
+	object_class->dispose = gedit_devhelp_plugin_dispose;
 
 	plugin_class->activate = impl_activate;
 	plugin_class->deactivate = impl_deactivate;
+
+	g_type_class_add_private (object_class, sizeof (GeditDevhelpPluginPrivate));
 }

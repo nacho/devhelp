@@ -22,7 +22,6 @@
 
 
 #include "gsc-provider-devhelp.h"
-#include <devhelp/dh-base.h>
 #include <devhelp/dh-link.h>
 #include <devhelp/dh-assistant-view.h>
 #include <gtksourceview/gtksourceview.h>
@@ -396,10 +395,9 @@ idle_populate_proposals (GscProviderDevhelp *devhelp)
 {
 	guint idx = 0;
 
-	if (devhelp->priv->dhbase == NULL)
+	if (devhelp->priv->view == NULL)
 	{
 		devhelp->priv->proposals = g_sequence_new ((GDestroyNotify)g_object_unref);
-		devhelp->priv->dhbase = dh_base_new ();
 		devhelp->priv->scrolled_window = gtk_scrolled_window_new (NULL, NULL);
 		devhelp->priv->view = dh_assistant_view_new ();
 
@@ -642,15 +640,17 @@ gsc_provider_devhelp_init (GscProviderDevhelp *self)
 						     16,
 						     GTK_ICON_LOOKUP_USE_BUILTIN,
 						     NULL);
-	
-	self->priv->idle_populate_id = g_idle_add ((GSourceFunc)idle_populate_proposals,
-	                                           self);
 }
 
 GscProviderDevhelp *
-gsc_provider_devhelp_new ()
+gsc_provider_devhelp_new (DhBase *dhbase)
 {
-	GscProviderDevhelp *ret = g_object_new (GSC_TYPE_PROVIDER_DEVHELP, NULL);
-	
-	return ret;
+	GscProviderDevhelp *devhelp = g_object_new (GSC_TYPE_PROVIDER_DEVHELP, NULL);
+
+	devhelp->priv->dhbase = g_object_ref (dhbase);
+
+	devhelp->priv->idle_populate_id = g_idle_add ((GSourceFunc)idle_populate_proposals,
+	                                              devhelp);
+
+	return devhelp;
 }

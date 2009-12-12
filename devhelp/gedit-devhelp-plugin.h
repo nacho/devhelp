@@ -51,6 +51,8 @@ typedef struct _GeditDevhelpPlugin		GeditDevhelpPlugin;
 struct _GeditDevhelpPlugin
 {
 	GeditPlugin parent_instance;
+
+	GeditDevhelpPluginPrivate *priv;
 };
 
 /*
