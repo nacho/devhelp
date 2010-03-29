@@ -93,10 +93,10 @@ G_DEFINE_TYPE_WITH_CODE (GscDevhelpItem,
 			 G_IMPLEMENT_INTERFACE (GTK_TYPE_SOURCE_COMPLETION_PROPOSAL,
 			 			gsc_devhelp_item_iface_init))
 
-static const gchar *
+static gchar *
 gsc_devhelp_item_get_text_impl (GtkSourceCompletionProposal *proposal)
 {
-	return dh_link_get_name (((GscDevhelpItem *)proposal)->link);
+	return g_strdup (dh_link_get_name (((GscDevhelpItem *)proposal)->link));
 }
 
 static void
@@ -127,10 +127,10 @@ gsc_devhelp_item_class_init (GscDevhelpItemClass *klass)
 	G_OBJECT_CLASS (klass)->finalize = gsc_devhelp_item_finalize;
 }
 
-static const gchar * 
+static gchar * 
 gsc_provider_devhelp_get_name (GtkSourceCompletionProvider *self)
 {
-	return "Devhelp";
+	return g_strdup ("Devhelp");
 }
 
 static void
